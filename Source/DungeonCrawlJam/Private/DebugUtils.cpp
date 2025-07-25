@@ -1,15 +1,31 @@
-#include "DebugUtils.hpp"
+#include "DebugUtils.h"
 #include "Engine/Engine.h"
 
-void MC_Debug::debugSphere(FVector const& pos, UWorld const* world, bool persistance, FColor clr)
+void UDebugUtils::debugSphere(FVector const& pos, UObject const* worldContextObj, 
+    bool persistance, FColor clr)
 {
-    if(world)
-        DrawDebugSphere(world, pos, 20.0f, 16, clr, persistance);
+    if( ! IsValid(GEngine) )
+        return;
+
+    auto const* const world = GEngine->GetWorldFromContextObjectChecked(worldContextObj);
+    DrawDebugSphere(world, pos, 20.0f, 16, clr, persistance);
 }
 
-void MC_Debug::debugLine(FVector const& start, FVector const& end, 
-    UWorld const* world, bool persistance, FColor clr)
+void UDebugUtils::debugLine(FVector const& start, FVector const& end, 
+    UObject const* worldContextObj, bool persistance, FColor clr)
 {
-    if(world)
-        DrawDebugLine(world, start, end, clr, persistance);
+    if( ! IsValid(GEngine) )
+        return;
+
+    auto const* const world = GEngine->GetWorldFromContextObjectChecked(worldContextObj);
+    DrawDebugLine(world, start, end, clr, persistance);
+}
+
+void UDebugUtils::debugActorBasisVectors(UObject const* worldContextObj, AActor const* actor, float scale)
+{
+    if( ! IsValid(GEngine) || ! IsValid(actor) )
+        return;
+    
+    auto const* const world = GEngine->GetWorldFromContextObjectChecked(worldContextObj);
+    DrawDebugCoordinateSystem(world, actor->GetActorLocation(), actor->GetActorRotation(), scale);
 }
